@@ -5,7 +5,7 @@ export const history = createBrowserHistory();
 
 
 export const getEvents = ({ page, limit, searchTerm, startDate, endDate }) => async dispatch => {
-    await axios.get(`${process.env.REACT_APP_API_URL}/events/getEvents`, {
+    await axios.get(`${process.env.REACT_APP_API_URL}/events`, {
         params: {
             page, // Adds page as a query parameter
             limit, // Adds limit as a query parameter
