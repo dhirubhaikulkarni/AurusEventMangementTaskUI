@@ -13,7 +13,7 @@ import rootReducers from './components/Store/rootReducers'
 
 function App() {
 
-    axios.interceptors.request.use((req) => {
+  axios.interceptors.request.use((req) => {
     req.headers['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
     req.headers['Content-Type'] = 'application/json';
     return req;
@@ -58,7 +58,6 @@ function App() {
             <Route path="/dashboard/*" element={<Dashboard />} />
           </Routes>
 
-          {/* <Footer /> */}
         </div>
       </Router>
     </Provider>

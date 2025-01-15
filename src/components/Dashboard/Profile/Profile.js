@@ -20,7 +20,7 @@ const Profile = () => {
             {user.firstName} {user.lastName}
           </div>
         </div>
-        
+
         <div className="row mt-5">
 
           <div className="row">
@@ -31,6 +31,11 @@ const Profile = () => {
           <div className="row">
             <strong className="col-3 col-lg-2 text-nowrap">Role:</strong>
             <div className="col-9 col-lg-10 text-nowrap">{user.role}</div>
+          </div>
+          
+          <div className="row">
+            <strong className="col-3 col-lg-2 text-nowrap">Contact Number:</strong>
+            <div className="col-9 col-lg-10 text-nowrap">{user.contactNumber}</div>
           </div>
         </div>
 

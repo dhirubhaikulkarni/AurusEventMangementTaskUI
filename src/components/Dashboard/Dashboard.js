@@ -7,24 +7,28 @@ import useAuth from '../Auth/useAuth';
 import Profile from './Profile/Profile';
 import Login from '../Auth/Login';
 import EventList from './Events/EventList';
+import NewEvent from './NewEvent/AddNewEvent';
 
 const Dashboard = () => {
   const user = useAuth();
   if (!user) {
     return null;
   }
+  const userRole = JSON.parse(localStorage.getItem('user'))?.role || 'user'; // Default to 'user' if not available
 
   return (
     <Container fluid className="h-100">
       <Row className='h-100'>
         <Col xs={2} className="bg-light sidebar shadow py-3">
           <Nav className="flex-column">
-            <Nav.Link as={Link} to="/dashboard/events">
+            <Nav.Link as={Link} to="/dashboard">
               <FaList /> All Events
             </Nav.Link>
-            <Nav.Link as={Link} to="/dashboard/add-event">
-              <FaPlus /> Add New Event
-            </Nav.Link>
+            {userRole === 'admin' &&
+              <Nav.Link as={Link} to="/dashboard/add-event">
+                <FaPlus /> Add New Event
+              </Nav.Link>
+            }
             <Nav.Link as={Link} to="/dashboard/profile">
               <FaUser /> Profile
             </Nav.Link>
@@ -32,8 +36,10 @@ const Dashboard = () => {
         </Col>
         <Col xs={10} className="content-area">
           <Routes>
-          <Route path="/" element={<EventList />} />
-          <Route path="profile" element={<Profile />} />
+            <Route path="/" element={<EventList />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="add-event" element={<NewEvent />} />
+            <Route path="add-event/:eventId" element={<NewEvent />} />
           </Routes>
         </Col>
       </Row>
