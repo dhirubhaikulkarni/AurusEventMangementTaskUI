@@ -4,10 +4,12 @@ import { Form, Button, Container, Row, Col, Alert, Spinner } from 'react-bootstr
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setLoading } from '../Store/loginSlice';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -71,13 +73,21 @@ const Login = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="formBasicPassword" className="mt-3">
-              <Form.Control className='rounded-pill'
-                type="password"
+            <Form.Group controlId="formBasicPassword" className="mt-3 position-relative">
+              <Form.Control
+                className="rounded-pill"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <span
+                className="position-absolute end-0 top-50 translate-middle-y pe-3"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </Form.Group>
 
             <div className='d-flex justify-content-center'>

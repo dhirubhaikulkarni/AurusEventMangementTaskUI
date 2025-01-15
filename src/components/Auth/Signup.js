@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Alert, Spinner } from 'react-bootstrap';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { registerUser, setLoading } from '../Store/loginSlice';
@@ -11,6 +12,8 @@ const Signup = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -36,7 +39,7 @@ const Signup = () => {
     }
 
 
-    dispatch(registerUser(email,password,firstName,lastName,contactNumber))
+    dispatch(registerUser(email, password, firstName, lastName, contactNumber))
   };
 
   return (
@@ -97,24 +100,38 @@ const Signup = () => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="formBasicPassword" className='mt-3'>
-                <Form.Control className='rounded-pill'
-                  type="password"
+              <Form.Group controlId="formBasicPassword" className="mt-3 position-relative">
+                <Form.Control
+                  className="rounded-pill"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
                 />
+                <span
+                  className="position-absolute end-0 top-50 translate-middle-y pe-3"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
               </Form.Group>
 
-              <Form.Group controlId="formBasicConfirmPassword" className='mt-3'>
+              <Form.Group controlId="formBasicConfirmPassword" className='mt-3 position-relative'>
                 <Form.Control className='rounded-pill'
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
+                <span
+                  className="position-absolute end-0 top-50 translate-middle-y pe-3"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                >
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
               </Form.Group>
 
               <div className='d-flex justify-content-center'>
