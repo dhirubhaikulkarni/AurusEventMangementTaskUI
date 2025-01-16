@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { createBrowserHistory } from 'history';
 import { decryptData, encryptData } from '../../security/crypto';
-export const history = createBrowserHistory();
 
 
 export const getEvents = ({ page, limit, searchTerm, startDate, endDate }) => async dispatch => {
@@ -109,12 +107,12 @@ export const updateEvent = (eventId, title, selectedCategory, selectedUser, loca
                 }
             }).catch((error) => {
                 dispatch(setLoading(false));
-                dispatch(setError('Failed to Update Post.'));
+                dispatch(setError(error.message));
                 dispatch(clearTimerMethod());
             });
     } catch (error) {
         dispatch(setLoading(false));
-        dispatch(setError('Failed to Update Post.'));
+        dispatch(setError(error.message));
         dispatch(clearTimerMethod());
     }
 };
@@ -124,7 +122,7 @@ export const deletePost = (ID, page, limit, searchTerm, startDate, endDate) => a
             .then((response) => {
                 response.data = decryptData(response.data)
                 if (response.status == 200) {
-                    dispatch(setSuccess(response.data.message));
+                    dispatch(setSuccess(true));
                     dispatch(getEvents(page, limit, searchTerm, startDate, endDate))
                     dispatch(clearTimerMethod());
 
@@ -151,7 +149,8 @@ const initialState = {
     success: null,
     error: "",
     loading: false,
-    totalEvents: 0
+    totalEvents: 0,
+    redirection: false
 
 
 };
@@ -162,6 +161,7 @@ const eventManagementSlice = createSlice({
     reducers: {
         setEvents: (state, action) => {
             state.data = action.payload
+            state.redirection = true
         },
         setTotalEvents: (state, action) => {
             state.totalEvents = action.payload

@@ -168,7 +168,7 @@ const NewEvent = () => {
                         <div className="col-12 col-md-4">
                             <Form.Group controlId="formBasicCategories" className="mt-3">
                                 <Form.Select id="exampleSelect" value={selectedUser} onChange={handleUserChange}>
-                                    <option value="" disabled>Select an Event Type</option>
+                                    <option value="" disabled>Select a User</option>
                                     {users.map(category => (
                                         <option key={category._id} value={category._id}>
                                             {category.firstName} {category.lastName}
@@ -183,10 +183,10 @@ const NewEvent = () => {
                     <div className="row">
                         <div className="col-12 col-md-3">
                             <Form.Group controlId="formBasicLocation" className="mt-3">
-                                <Form.Label>Location</Form.Label>
+                                <Form.Label>State</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Location"
+                                    placeholder="State"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
                                     required
