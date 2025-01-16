@@ -15,7 +15,7 @@ export const registerUser = (email, password, firstName, lastName, contactNumber
     }
     try {
         setLoading(true)
-        await axios.post(`${process.env.REACT_APP_API_URL}/users/register`, { data: encryptData(data) })
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/users/register`, { data: encryptData(data) })
             .then(response => {
                 response.data = decryptData(response.data)
                 if (response.status === 200) {
@@ -44,7 +44,7 @@ export const loginUser = (email, password) => async dispatch => {
 
     try {
         dispatch(setLoading(true))
-        await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, encryptData(data))
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, encryptData(data))
             .then(response => {
                 if (response.data.error) {
                     dispatch(response.data.error.message)

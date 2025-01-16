@@ -4,7 +4,8 @@ import { decryptData, encryptData } from '../../security/crypto';
 
 
 export const getEvents = ({ page, limit, searchTerm, startDate, endDate }) => async dispatch => {
-    await axios.get(`${process.env.REACT_APP_API_URL}/events`, {
+    dispatch(setLoading(true))
+    await axios.get(`${process.env.REACT_APP_API_URL}/api/events`, {
         params: {
             page, // Adds page as a query parameter
             limit, // Adds limit as a query parameter
@@ -16,15 +17,17 @@ export const getEvents = ({ page, limit, searchTerm, startDate, endDate }) => as
         .then(response => {
             response.data = decryptData(response.data)
             dispatch(setEvents(response.data.result))
+            dispatch(setLoading(false))
             dispatch(setTotalEvents(response.data.totalEvents))
             dispatch(clearTimerMethod());
         }).catch((e) => {
+            dispatch(setLoading(false))
             dispatch(setEvents([]))
         })
 
 };
 export const getEventType = () => async dispatch => {
-    await axios.get(`${process.env.REACT_APP_API_URL}/events/eventType`)
+    await axios.get(`${process.env.REACT_APP_API_URL}/api/events/eventType`)
         .then(response => {
             response.data = decryptData(response.data)
             dispatch(setEventType(response.data.filter(event => event.isActive)))
@@ -35,7 +38,7 @@ export const getEventType = () => async dispatch => {
 
 };
 export const getUsers = () => async dispatch => {
-    await axios.get(`${process.env.REACT_APP_API_URL}/events/usersDetails`)
+    await axios.get(`${process.env.REACT_APP_API_URL}/api/events/usersDetails`)
         .then(response => {
             response.data = decryptData(response.data)
             dispatch(setUsers(response.data))
@@ -60,7 +63,7 @@ export const createEvent = (title, selectedCategory, selectedUser, location, add
     let data = { title, selectedCategory, selectedUser, location, address, startDate, endDate, content }
     try {
         setLoading(true)
-        await axios.post(`${process.env.REACT_APP_API_URL}/events/createEvent`, {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/events/createEvent`, {
             data: encryptData(data)
         })
             .then(response => {
@@ -69,15 +72,18 @@ export const createEvent = (title, selectedCategory, selectedUser, location, add
                     dispatch(setLoading(false))
                     dispatch(setSuccess(response.data.message));
                     dispatch(clearTimerMethod());
+                    dispatch(setUpdateSuccess(true));
                 }
             }).catch((error) => {
                 dispatch(setLoading(false))
                 if (error.response && error.response.status === 400) {
                     dispatch(setError(error.response.data.message));
+                    dispatch(setUpdateSuccess(null));
                     dispatch(clearTimerMethod());
                 } else {
                     dispatch(setError('Failed to create an event.'));
                     dispatch(clearTimerMethod());
+                    dispatch(setUpdateSuccess(null));
                 }
             })
 
@@ -95,7 +101,7 @@ export const updateEvent = (eventId, title, selectedCategory, selectedUser, loca
     try {
         let data = { title, selectedCategory, selectedUser, location, address, startDate, endDate, content }
         dispatch(setLoading(true));
-        await axios.put(`${process.env.REACT_APP_API_URL}/events/editEvent/${eventId}`, {
+        await axios.put(`${process.env.REACT_APP_API_URL}/api/events/editEvent/${eventId}`, {
             data: encryptData(data)
         })
             .then(response => {
@@ -104,25 +110,28 @@ export const updateEvent = (eventId, title, selectedCategory, selectedUser, loca
                     dispatch(setLoading(false));
                     dispatch(setSuccess(response.data.message));
                     dispatch(clearTimerMethod());
+                    dispatch(setUpdateSuccess(true));
                 }
             }).catch((error) => {
                 dispatch(setLoading(false));
                 dispatch(setError(error.message));
                 dispatch(clearTimerMethod());
+                dispatch(setUpdateSuccess(null));
             });
     } catch (error) {
         dispatch(setLoading(false));
         dispatch(setError(error.message));
         dispatch(clearTimerMethod());
+        dispatch(setUpdateSuccess(null));
     }
 };
 export const deletePost = (ID, page, limit, searchTerm, startDate, endDate) => async (dispatch) => {
     try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/events/${ID}`)
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/events/${ID}`)
             .then((response) => {
                 response.data = decryptData(response.data)
                 if (response.status == 200) {
-                    dispatch(setSuccess(true));
+                    dispatch(setSuccess("Event Deleted Successfully"));
                     dispatch(getEvents(page, limit, searchTerm, startDate, endDate))
                     dispatch(clearTimerMethod());
 
@@ -147,6 +156,7 @@ const initialState = {
     eventTypes: [],
     users: [],
     success: null,
+    updatesuccess: null,
     error: "",
     loading: false,
     totalEvents: 0,
@@ -175,6 +185,9 @@ const eventManagementSlice = createSlice({
         setSuccess: (state, action) => {
             state.success = action.payload
         },
+        setUpdateSuccess: (state, action) => {
+            state.updatesuccess = action.payload
+        },
         setError: (state, action) => {
             state.error = action.payload
         },
@@ -191,7 +204,8 @@ export const {
     setUsers,
     setSuccess,
     setError,
-    setLoading
+    setLoading,
+    setUpdateSuccess
 } = eventManagementSlice.actions;
 
 export default eventManagementSlice.reducer;

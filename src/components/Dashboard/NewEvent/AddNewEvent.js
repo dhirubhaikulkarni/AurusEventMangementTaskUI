@@ -5,7 +5,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createEvent, getEventType, getUsers, setError, updateEvent } from '../../Store/eventManagementSlice';
+import { createEvent, getEventType, getUsers, setError, setUpdateSuccess, updateEvent } from '../../Store/eventManagementSlice';
 
 const NewEvent = () => {
     const { eventId } = useParams();  // Get eventId from route params
@@ -27,6 +27,7 @@ const NewEvent = () => {
     const loading = useSelector(state => state.event.loading);
     const error = useSelector(state => state.event.error);
     const success = useSelector(state => state.event.success);
+    const updatesuccess = useSelector(state => state.event.updatesuccess);
     const navigate = useNavigate();
 
     const formatDate = (date) => {
@@ -64,6 +65,13 @@ const NewEvent = () => {
             setAddress('')
         }
     }, [dispatch, eventId, events]);
+
+    useEffect(() => {
+        if (updatesuccess != null){
+            dispatch(setUpdateSuccess(null));
+            navigate('/dashboard');
+        }
+    }, [updatesuccess]);
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
@@ -123,7 +131,7 @@ const NewEvent = () => {
         }
         else {
             if (eventId) {
-                dispatch(updateEvent(eventId,title, selectedCategory, selectedUser, location, address, startDate, endDate, content));
+                dispatch(updateEvent(eventId, title, selectedCategory, selectedUser, location, address, startDate, endDate, content));
             } else {
                 dispatch(createEvent(title, selectedCategory, selectedUser, location, address, startDate, endDate, content))
             }
@@ -230,7 +238,7 @@ const NewEvent = () => {
                                     type="datetime-local"
                                     value={endDate}
                                     onChange={handleEndDateChange}
-                                    
+
                                     required
                                 />
                             </Form.Group>

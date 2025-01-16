@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useAuth from '../../Auth/useAuth';
-import { Container, Row, Col, Card, Pagination, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Pagination, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { deletePost, getEvents, getEventType } from '../../Store/eventManagementSlice.js';
+import { clearTimerMethod, deletePost, getEvents, getEventType, setSuccess } from '../../Store/eventManagementSlice.js';
 import ConfirmationDialog from '../../Dialog/ConfirmationDialog.js';
 import debounce from 'lodash.debounce';
 import { jwtDecode } from 'jwt-decode';
@@ -15,6 +15,7 @@ const EventList = () => {
     const user = useAuth();
     const events = useSelector((state) => state.event.data);
     const success = useSelector((state) => state.event.success);
+    const loading = useSelector((state) => state.event.loading);
     const redirection = useSelector((state) => state.event.redirection);
     const totalEvents = useSelector((state) => state.event.totalEvents);
     const navigate = useNavigate();
@@ -36,11 +37,8 @@ const EventList = () => {
     }, [dispatch, currentPage, limit, searchTerm, startDate, endDate]);
 
     useEffect(() => {
-        debugger;
-        if (success) {
-            alert("Post Deleted Successfully");
-        }
-    }, [success, redirection]);
+        navigate('/dashboard');
+    }, [success]);
 
     const handleDelete = (eventID) => {
         setOpen(true);
@@ -81,7 +79,14 @@ const EventList = () => {
 
     return (
         <Container className="pt-4 h-100">
-            {/* Filters Section */}
+            {loading && (
+                <div className="spinner-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100">
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </div>
+            )}
+            {success && <Alert variant="success">{success}</Alert>}
             <Row className="mb-4">
                 <Col md={3}>
                     <Form.Control
@@ -107,16 +112,6 @@ const EventList = () => {
                     />
                 </Col>
                 <Col md={3}>
-                    <Button
-                        className="me-2" // Adds a right margin
-                        variant="primary"
-                        onClick={() => {
-                            setCurrentPage(1); // Reset to the first page
-                            dispatch(getEvents({ page: 1, limit, searchTerm, startDate, endDate }));
-                        }}
-                    >
-                        Apply Filters
-                    </Button>
                     <Button
                         variant="primary"
                         onClick={() => {
@@ -280,7 +275,6 @@ const EventList = () => {
                 ))
                 }
             </Row >
-
 
             <ConfirmationDialog
                 open={open}

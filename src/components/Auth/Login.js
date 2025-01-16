@@ -30,7 +30,7 @@ const Login = () => {
     const encryptedData = encryptData(data);
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`,  { data: encryptedData });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { data: encryptedData });
       response.data = decryptData(response.data)
       if (response.data.error) {
         setError(response.data.error.message);
@@ -43,24 +43,24 @@ const Login = () => {
         dispatch(setLoading(false));
       }
     } catch (error) {
-      setError('Login failed, please try again');
+      setError('Invalid Credentials..');
       dispatch(setLoading(false));
     }
   };
 
   return (
     <Container className="h-100 mt-5">
-
+      {loading && (
+        <div className="spinner-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100" style={{ zIndex: 1050, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      )}
       <div className="d-flex justify-content-center h-auto">
 
         <Col className="bg-primary-subtle p-4 rounded-4 shadow" xs={12} sm={9} md={6} lg={5} xl={4}>
-          {loading && (
-            <div className="spinner-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>
-          )}
+
           <div className='bg-primary w-100 rounded-4'>
             <img className='w-100 rounded-4' height={180} src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzmvWwOZz4d-8L5DAz4Bhy1piaP0FkFdnpKg&s'>
             </img>
