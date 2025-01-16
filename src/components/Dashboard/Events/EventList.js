@@ -7,6 +7,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deletePost, getEvents, getEventType } from '../../Store/eventManagementSlice.js';
 import ConfirmationDialog from '../../Dialog/ConfirmationDialog.js';
 import debounce from 'lodash.debounce'; // Install lodash if not already installed: npm install lodash
+import { jwtDecode } from 'jwt-decode';
 
 const EventList = () => {
     const dispatch = useDispatch();
@@ -23,7 +24,9 @@ const EventList = () => {
     const [startDate, setStartDate] = useState(''); // Start date filter
     const [endDate, setEndDate] = useState(''); // End date filter
 
-    const userRole = JSON.parse(localStorage.getItem('user'))?.role || 'user';
+    const token = JSON.parse(localStorage.getItem('jwt_token')); // Default to 'user' if not available
+    const decodedToken = jwtDecode(token);
+    const userRole = decodedToken.role
 
     useEffect(() => {
         dispatch(getEventType());
@@ -44,7 +47,7 @@ const EventList = () => {
     const handleClose = (newValue) => {
         setOpen(false);
         if (newValue) {
-            dispatch(deletePost(removeID));
+            dispatch(deletePost(removeID,{ page: currentPage, limit, searchTerm, startDate, endDate }));
         }
     };
 

@@ -8,14 +8,18 @@ import Profile from './Profile/Profile';
 import Login from '../Auth/Login';
 import EventList from './Events/EventList';
 import NewEvent from './NewEvent/AddNewEvent';
+import { jwtDecode } from 'jwt-decode';
+
 
 const Dashboard = () => {
   const user = useAuth();
   if (!user) {
     return null;
   }
-  const userRole = JSON.parse(localStorage.getItem('user'))?.role || 'user'; // Default to 'user' if not available
-
+  const token = JSON.parse(localStorage.getItem('jwt_token')); // Default to 'user' if not available
+  const decodedToken = jwtDecode(token);
+  const userRole = decodedToken.role
+ 
   return (
     <Container fluid className="h-100">
       <Row className='h-100'>

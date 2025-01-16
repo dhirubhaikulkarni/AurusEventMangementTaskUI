@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setLoading } from '../Store/loginSlice';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { decryptData, encryptData } from '../../security/crypto';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -25,8 +26,12 @@ const Login = () => {
       return;
     }
 
+    let data = { email, password }
+    const encryptedData = encryptData(data);
+
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, { email, password });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`,  { data: encryptedData });
+      response.data = decryptData(response.data)
       if (response.data.error) {
         setError(response.data.error.message);
         dispatch(setLoading(false));

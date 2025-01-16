@@ -1,23 +1,24 @@
-import crypto from 'crypto';
-import { Buffer } from 'buffer';
+import CryptoJS from "crypto-js";
 
-window.Buffer = Buffer;
+const secretKey = "12345678901234567890123456789012"; // 32-byte key
+const iv = CryptoJS.enc.Utf8.parse("1234567890123456"); // 16-byte IV
 
-const algorithm = 'aes256';
-const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
-const iv = crypto.randomBytes(16);
-
-export const encrypt = (text) => {
-    const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-    return {
-        iv: iv.toString('hex'),
-        content: encrypted.toString('hex'),
-    };
+// Encrypt data
+export const encryptData = (data) => {
+  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), CryptoJS.enc.Utf8.parse(secretKey), {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return encrypted.toString();
 };
 
-export const decrypt = (hash) => {
-    const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, 'hex'));
-    const decrypted = Buffer.concat([decipher.update(Buffer.from(hash.content, 'hex')), decipher.final()]);
-    return decrypted.toString();
+// Decrypt data
+export const decryptData = (ciphertext) => {
+  const decrypted = CryptoJS.AES.decrypt(ciphertext, CryptoJS.enc.Utf8.parse(secretKey), {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 };
