@@ -95,14 +95,21 @@ const NewEvent = () => {
     };
 
     const handleDateChange = (e) => {
+        debugger;
         const selectedDate = new Date(e.target.value);
         const currentDate = new Date();
+        const newEndDate = new Date(endDate);
 
         currentDate.setSeconds(0, 0);
 
         if (selectedDate < currentDate) {
             dispatch(setError("Start Date & Time cannot be in the past."));
-        } else {
+        }
+        else if(selectedDate > newEndDate){
+            dispatch(setError("Start Date & Time should not be greater than end date.")); 
+        }
+        
+        else {
             setStartDate(e.target.value);
             dispatch(setError(''));
         }
